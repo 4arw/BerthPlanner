@@ -1,0 +1,266 @@
+﻿@page
+@model BerthManagementModel
+@using BerthPlanner.Model
+
+@{
+    ViewData["Title"] = "Berth Management";
+}
+@section PageHeader {
+    <h2>Berth Management</h2>
+    <p>Add, edit and manage the port's berths.</p>
+}
+<div class="container mt-4">
+
+    <h2 class="mb-4" style="color:#0B3D6E">
+        Berth Management
+    </h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success auto-hide">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- Add New Berth -->
+    <button type="button" id="toggleAddForm" class="btn btn-primary mb-3">
+        + Add New Berth
+    </button>
+    <div id="addBerthCard" class="card shadow-sm mb-4" style="display:none">
+        <div class="card-body">
+            
+            <h4>Add New Berth</h4>
+
+            <form method="post">
+
+                <div class="mb-3">
+                    <label class="form-label">Berth Name</label>
+                    <input asp-for="BerthName"
+                           class="form-control"
+                           required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Maximum Length (meters)
+                    </label>
+                    <input asp-for="MaxLength"
+                           type="number"
+                           step="0.01"
+                           min="0.01"
+                           class="form-control"
+                           required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Maximum Depth (meters)
+                    </label>
+                    <input asp-for="MaxDepth"
+                           type="number"
+                           step="0.01"
+                           min="0.01"
+                           class="form-control"
+                           required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Berth Status</label>
+                    <select asp-for="Status"
+                            asp-items="Html.GetEnumSelectList<BerthStatus>()"
+                            class="form-select">
+                    </select>
+                </div>
+
+                <button type="submit"
+                        class="btn text-white"
+                        style="background-color:#0B3D6E">
+                    Add Berth
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Registered Berths -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 style="color:#0B3D6E">
+                Registered Berths
+            </h4>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Berth ID</th>
+                            <th>Berth Name</th>
+                            <th>Max Length</th>
+                            <th>Max Depth</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var berth in Model.Berths)
+                        {
+                            <tr>
+                                <td>@berth.BerthId</td>
+                                <td>@berth.BerthName</td>
+                                <td>@berth.MaxLength</td>
+                                <td>@berth.MaxDepth</td>
+
+                                <td>
+                                    @if (berth.Status == BerthStatus.Available)
+                                    {
+                                        <span class="badge bg-success">
+                                            Available
+                                        </span>
+                                    }
+                                    else if (berth.Status == BerthStatus.Maintenance)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Maintenance
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <!-- Update Status -->
+                                    <form method="post"
+                                          asp-page-handler="UpdateStatus"
+                                          class="d-flex gap-2 mb-2">
+
+                                        <input type="hidden"
+                                               name="berthId"
+                                               value="@berth.BerthId" />
+
+                                        <select name="newStatus"
+                                                class="form-select form-select-sm">
+                                            @foreach (var status in Enum.GetValues<BerthStatus>())
+                                            {
+                                                <option value="@status"
+                                                        selected="@(berth.Status == status)">
+                                                    @status
+                                                </option>
+                                            }
+                                        </select>
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-primary">
+                                            Update
+                                        </button>
+                                    </form>
+
+                                    <!-- Edit Berth Button -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#edit-@berth.BerthId">
+                                        Edit Berth
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Edit Berth Form -->
+                            <tr>
+                                <td colspan="6" class="p-0">
+                                    <div class="collapse"
+                                         id="edit-@berth.BerthId">
+
+                                        <div class="p-3 bg-light">
+
+                                            <h5>Edit @berth.BerthName</h5>
+
+                                            <form method="post"
+                                                  asp-page-handler="EditBerth">
+
+                                                <input type="hidden"
+                                                       name="berthId"
+                                                       value="@berth.BerthId" />
+
+                                                <div class="row g-3">
+
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">
+                                                            Berth Name
+                                                        </label>
+                                                        <input name="newName"
+                                                               value="@berth.BerthName"
+                                                               class="form-control"
+                                                               required />
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">
+                                                            Maximum Length
+                                                        </label>
+                                                        <input name="newLength"
+                                                               type="number"
+                                                               step="0.01"
+                                                               min="0.01"
+                                                               max="10000"
+                                                               value="@berth.MaxLength.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                                               class="form-control"
+                                                               required />
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">
+                                                            Maximum Depth
+                                                        </label>
+                                                        <input name="newDepth"
+                                                               type="number"
+                                                               step="0.01"
+                                                               min="0.01"
+                                                               max="1000"
+                                                               value="@berth.MaxDepth.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                                               class="form-control"
+                                                               required />
+                                                    </div>
+
+                                                </div>
+
+                                                <button type="submit"
+                                                        class="btn btn-success mt-3">
+                                                    Save Changes
+                                                </button>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+            @if (!Model.Berths.Any())
+            {
+                <div class="alert alert-info">
+                    No berths registered yet.
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>

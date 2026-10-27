@@ -1,0 +1,33 @@
+:root {
+    --bp-navy:#0B3D6E;
+    --bp-teal:#1FA2A6 ;
+    --bp-yellow:#F2B544;
+    --bp-slate:#5A6B7B ;
+    --bp-light: #F4F7FA;
+}
+html { font-size: 14px; }
+@media (min-width:768px) { html { font-size: 16px;}}
+
+body { background-color: var(--bp-light); color: var(--bp-slate);font-family:'Segoe UI',  Arial,sans-serif;}
+h1,h2,h3,h4,h5{ color: var(--bp-navy);}
+
+.bp-navbar{background-color: var(--bp-navy); } /*  Navbar*/
+.bp-navbar.navbar-brand { color:#fff; font-weight: 700; font-size: 1.3rem;}
+.bp-brand-accent{color: var(--bp-teal);margin-left:4px; }
+.bp-navbar .nav-link {color: #fff !important; font-weight: 500; border-radius: 6px; padding: 8px 12px !important; margin: 2px; }
+.bp-navbar.nav-link:hover, .bp-navbar .nav-link.active {background-color: var(--bp-teal); }
+.bp-navbar .navbar-toggler { border-color: rgba(255,255,255,0.5); }
+.dropdown-item.active, .dropdown-item:active {background-color: var(--bp-teal);}
+
+/* Page header */
+.bp-page-header {background-color: #fff; border-bottom: 4px solid var(--bp-yellow); padding: 20px 0; }
+.bp-page-header h2{margin-bottom: 4px; }
+.bp-page-header p {margin-bottom: 0; }
+
+/* Cards and buttons */
+.card { border-radius: 12px;}
+.btn { border-radius: 7px;}
+.btn:focus,.form-control:focus, .form-check-input:focus { box-shadow: 0 0 0 0.25rem rgba(31,162,166,0.35);}
+
+.bp-footer { background-color: var(--bp-navy); color: #fff; }  /* Footer */
+.bp-footer a{color: var(--bp-yellow); text-decoration:none;}

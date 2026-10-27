@@ -1,0 +1,61 @@
+﻿@page
+@model ErrorModel
+
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container mt-5">
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body text-center p-5">
+
+            <h1 class="text-danger mb-3">
+
+                @if (Model.ErrorStatusCode == 404)
+                {
+                    <span>404 - Page Not Found</span>
+                }
+                else
+                {
+                    <span>Something Went Wrong</span>
+                }
+
+            </h1>
+
+            <p class="text-muted">
+
+                @if (Model.ErrorStatusCode == 404)
+                {
+                    <span>
+                        The requested page could not be found.
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        An unexpected error occurred.
+                        Please try again later.
+                    </span>
+                }
+
+            </p>
+
+            @if (Model.ShowRequestId)
+            {
+                <small class="text-muted d-block mb-3">
+                    Request ID: @Model.RequestId
+                </small>
+            }
+
+            <a asp-page="/Index"
+               class="btn btn-primary mt-3">
+                Back to Home
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,102 @@
+﻿@{
+    var current = ViewContext.RouteData.Values["page"]?.ToString() ??"";
+    string Active(params string[] pages) => pages.Contains(current) ? "active" : "";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - BerthPlanner</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BerthPlanner.styles.css" asp-append-version="true" />
+    -
+    @await RenderSectionAsync("Styles", required: false)   <!-- optional section: extra CSS for a single page -->
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <!--header, navigation Menu  -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bp-navbar shadow-sm">
+            <div class="container-fluid px-4">
+
+                <!--logo,website name -->
+                <a class="navbar-brand d-flex align-items-center" asp-page="/Index">
+                    <img src="~/images/logo.png" alt="BerthPlanner logo" width="38" height="38"  class="me-2" />
+                    Berth<span class="bp-brand-accent">Planner</span>
+                </a>
+
+                <!--mobile menu button -->
+                <button class="navbar-toggler"  type="button"
+                        data-bs-toggle="collapse" data-bs-target= "#mainNavbar"
+                        aria-controls="mainNavbar"  aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"> </span> </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav ms-auto">
+
+                        <li class="nav-item">
+                            <a class="nav-link @Active("/Index")" asp-page="/Index">Home</a>
+                        </li>
+                        <li class="nav-item dropdown"> <!--shipping Agent menu -->
+                            <a class="nav-link dropdown-toggle @Active("/VesselRegistration", "/BerthRequest", "/MyRequests")"
+                               href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Shipping Agent </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item @Active("/VesselRegistration")" asp-page="/VesselRegistration">Vessel Registration </a> </li>
+                                 <li><a class="dropdown-item @Active("/BerthRequest")"asp-page="/BerthRequest">Berth Request </a> </li>
+                                  <li><a class="dropdown-item @Active("/MyRequests")" asp-page="/MyRequests">My Requests</a></li>
+                            </ul>
+                        </li>
+
+                     
+                        <li class="nav-item dropdown">   <!--port supervisor menu  -->
+                            <a class="nav-link dropdown-toggle @Active("/RequestApproval")"
+                               href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Port Supervisor </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item @Active("/RequestApproval")" asp-page="/RequestApproval">Request Approval</a></li>
+                            </ul>
+                        </li>
+
+                       
+                        <li class="nav-item  dropdown">  <!--port Administrator menu -->
+                            <a class="nav-link dropdown-toggle @Active("/BerthManagement ")"
+                               href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">
+                                Port Admin 
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end"> <li><a class="dropdown-item @Active("/BerthManagement")" asp-page="/BerthManagement">Berth Management</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                 </div>
+            </div>
+        </nav>
+    </header>
+
+    <!--optional section: page title banner -->
+    @if (IsSectionDefined("PageHeader")) 
+    {
+       <section class="bp-page-header mb-4">
+             <div class="container">
+             @await RenderSectionAsync("PageHeader", required: false)
+           </div>
+        </section>
+    }
+
+
+    <main role="main" class="flex-grow-1 pb-4">   <!-- main page content -->
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+  
+    <partial name="_Footer" />  <!--  Footer (partial view)-->
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script> <!--Scripts-->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false) <!-- Optional section: extra scripts for a single page -->
+</body>
+</html>

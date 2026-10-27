@@ -1,0 +1,314 @@
+﻿@page
+@model BerthRequestModel
+@using BerthPlanner.Model
+
+@{
+    ViewData["Title"] = "Berth Request";
+}
+
+@section PageHeader {
+    <h2>Berth Request</h2>
+    <p>Submit a berth booking request for a registered vessel.</p>
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-2" style="color:#0B3D6E">
+        Berth Request
+    </h2>
+
+    <p class="text-muted mb-4">
+        Submit a berth booking request for a registered vessel.
+    </p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success auto-hide">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4 class="mb-3" style="color:#0B3D6E">
+                New Berth Request
+            </h4>
+
+            <form method="post">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Select Vessel
+                        </label>
+
+                        <select asp-for="VesselId"
+                                class="form-select"
+                                required>
+
+                            <option value="0">
+                                -- Select Vessel --
+                            </option>
+
+                            @foreach (var vessel in Model.Vessels)
+                            {
+                                <option value="@vessel.VesselId">
+                                    @vessel.VesselName
+                                    (Length: @vessel.Length m,
+                                    Draft: @vessel.Draft m)
+                                </option>
+                            }
+
+                        </select>
+                        <div id="vesselInfo" class="form-text mt-2"></div>
+                    </div>
+                    <div id="availabilityResult" class="mt-3"></div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Select Berth
+                        </label>
+
+                        <select asp-for="BerthId"
+                                class="form-select"
+                                required>
+
+                            <option value="0">
+                                -- Select Berth --
+                            </option>
+
+                            @foreach (var berth in Model.Berths)
+                            {
+                                <option value="@berth.BerthId">
+                                    @berth.BerthName
+                                    (@berth.Status)
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Arrival Time
+                        </label>
+
+                        <input asp-for="ArrivalTime"
+                               type="datetime-local"
+                               asp-format="{0:yyyy-MM-ddTHH:mm}"
+                               class="form-control"
+                               required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Departure Time
+                        </label>
+
+                        <input asp-for="DepartureTime"
+                               type="datetime-local"
+                               asp-format="{0:yyyy-MM-ddTHH:mm}"
+                               class="form-control"
+                               required />
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+                    <div id="availabilityResult" class="mt-3"></div>
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Submit Request
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    @if (Model.SuggestedArrival.HasValue &&
+         Model.SuggestedDeparture.HasValue)
+    {
+        <div class="alert alert-info mb-4">
+
+            <h5>Suggested Alternative Time</h5>
+
+            <p>
+                The selected berth is occupied during
+                the requested period. The next available
+                time for the same berth is:
+            </p>
+
+            <p>
+                <strong>Suggested Arrival:</strong>
+                @Model.SuggestedArrival.Value.ToString("dd MMM yyyy HH:mm")
+            </p>
+
+            <p>
+                <strong>Suggested Departure:</strong>
+                @Model.SuggestedDeparture.Value.ToString("dd MMM yyyy HH:mm")
+            </p>
+
+            <p class="mb-0">
+                This suggestion includes the required
+                two-hour turnaround gap.
+            </p>
+
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+
+                <h4 style="color:#0B3D6E">
+                    Alternative Berths
+                </h4>
+
+                @if (Model.AlternativeBerths.Any())
+                {
+                    <p class="text-muted">
+                        The following berths are suitable
+                        and available for your selected period:
+                    </p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Berth Name</th>
+                                    <th>Max Length</th>
+                                    <th>Max Depth</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var berth in Model.AlternativeBerths)
+                                {
+                                    <tr>
+                                        <td>@berth.BerthName</td>
+                                        <td>@berth.MaxLength m</td>
+                                        <td>@berth.MaxDepth m</td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                @berth.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        No suitable alternative berths were found.
+                    </p>
+                }
+
+            </div>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-3" style="color:#0B3D6E">
+                Submitted Berth Requests
+            </h4>
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-bordered align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Vessel</th>
+                            <th>Berth</th>
+                            <th>Arrival</th>
+                            <th>Departure</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var request in Model.Requests)
+                        {
+                            <tr>
+
+                                <td>@request.RequestId</td>
+
+                                <td>
+                                    @Model.GetVesselName(request.VesselId)
+                                </td>
+
+                                <td>
+                                    @Model.GetBerthName(request.BerthId)
+                                </td>
+
+                                <td>
+                                    @request.ArrivalTime.ToString("dd MMM yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @request.DepartureTime.ToString("dd MMM yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @if (request.Status == RequestStatus.Pending)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Pending
+                                        </span>
+                                    }
+                                    else if (request.Status == RequestStatus.Approved)
+                                    {
+                                        <span class="badge bg-success">
+                                            Approved
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            @request.Status
+                                        </span>
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            @if (!Model.Requests.Any())
+            {
+                <div class="alert alert-info">
+                    No berth requests have been submitted yet.
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>

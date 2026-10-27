@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "yYQzxA+yO+A=",
+  "success": true,
+  "projectFilePath": "D:\\WebApplication\\BerthPlanner_final\\BerthPlanner\\BerthPlanner.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\GR\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.20\\microsoft.netcore.app.ref.9.0.20.nupkg.sha512",
+    "C:\\Users\\GR\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.20\\microsoft.windowsdesktop.app.ref.9.0.20.nupkg.sha512",
+    "C:\\Users\\GR\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.20\\microsoft.aspnetcore.app.ref.9.0.20.nupkg.sha512",
+    "C:\\Users\\GR\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.20\\microsoft.netcore.app.host.win-x64.9.0.20.nupkg.sha512"
+  ],
+  "logs": []
+}
